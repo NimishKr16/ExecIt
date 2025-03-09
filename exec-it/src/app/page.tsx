@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,7 +16,7 @@ import {
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import CodeEditor from "@/components/CodeEditor";
-
+import { Typewriter } from "react-simple-typewriter";
 const languages = {
   javascript: "javascript",
   python: "python",
@@ -25,22 +25,44 @@ const languages = {
   java: "java",
 };
 
-const defaultCodeTemplates: { [key: string]: string } = {
-  javascript: "// Write your code here...",
-  python: "# Write your code here...",
-  c: "// Write your code here...",
-  cpp: "// Write your code here...",
-  java: "// Write your code here...",
-};
-
 export default function Home() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [output, setOutput] = useState("");
   const [input, setInput] = useState("");
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if screen is small
+  const text = "ExecIt - Online Code Compiler";
+
+  useEffect(() => {
+    // Reset code and output when language changes
+    setOutput(""); // Clear the output when the language is changed
+    setInput(""); // Clear the input when the language is changed
+  }, [language]);
+
+  const runCode = async () => {
+    setOutput("Running..."); // Show loading state
+
+    try {
+      const res = await fetch("/api/execute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ language, code, input }),
+      });
+
+      const result = await res.json();
+
+      if (result.error) {
+        setOutput(`Error:\n${result.error}`);
+      } else {
+        setOutput(result.output);
+      }
+    } catch (err) {
+      setOutput("Failed to execute code");
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 3, color: "white", height: "90vh" }}>
@@ -55,7 +77,7 @@ export default function Home() {
           fontSize: { xs: "24px", md: "32px" },
         }}
       >
-        ExecIt - Online Code Compiler
+        <Typewriter words={[text]} typeSpeed={50} />
       </Typography>
 
       {/* Main Layout (Responsive) */}
@@ -90,7 +112,10 @@ export default function Home() {
             }}
           >
             {/* Language Selector (Smaller) */}
-            <FormControl variant="outlined" sx={{ width: { xs: "120px", md: "150px" } }}>
+            <FormControl
+              variant="outlined"
+              sx={{ width: { xs: "120px", md: "150px" } }}
+            >
               <InputLabel>Language</InputLabel>
               <Select
                 value={language}
@@ -124,7 +149,7 @@ export default function Home() {
                 backgroundColor: "#00bcd4",
                 "&:hover": { backgroundColor: "#008ba3" },
               }}
-              onClick={() => alert("Run Code logic to be added")}
+              onClick={runCode}
             >
               Run Code
             </Button>
@@ -156,8 +181,15 @@ export default function Home() {
               mt: 8,
             }}
           >
-            <Typography variant="h6" sx={{ color: "primary.main", mb: 1, fontSize: { xs: "16px", md: "18px" } }}>
-              Input (Optional)
+            <Typography
+              variant="h6"
+              sx={{
+                color: "primary.main",
+                mb: 1,
+                fontSize: { xs: "16px", md: "18px" },
+              }}
+            >
+              Input
             </Typography>
             <TextField
               fullWidth
@@ -182,32 +214,62 @@ export default function Home() {
           <Box
             sx={{
               mt: 2,
-              backgroundColor: "#1e1e1e",
+              backgroundColor: "#181818", // Slightly darker for contrast
               borderRadius: 2,
               padding: 2,
               flexGrow: 1,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+              border: "1px solid #333", // Border for a more defined look
             }}
           >
-            <Typography variant="h6" sx={{ color: "primary.main", mb: 1, fontSize: { xs: "16px", md: "18px" } }}>
-              Output
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#00bcd4",
+                mb: 1,
+                fontSize: { xs: "16px", md: "18px" },
+                fontWeight: "bold",
+              }}
+            >
+              Terminal Output
             </Typography>
-            <TextField
-              fullWidth
-              multiline
-              rows={6}
-              value={output}
-              disabled
-              variant="outlined"
+
+            {/* Scrollable Output Box */}
+            <Box
               sx={{
                 backgroundColor: "#121212",
                 borderRadius: 2,
+                padding: 2,
                 color: "white",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#00bcd4" },
-                  "&:hover fieldset": { borderColor: "#008ba3" },
-                },
+                fontFamily: "monospace", // Like a real terminal
+                fontSize: "14px",
+                whiteSpace: "pre-wrap", // Keeps formatting
+                overflowY: "auto",
+                maxHeight: "200px", // Prevents growing too large
+                border: "1px solid #333",
               }}
-            />
+            >
+              {output ? (
+                output.split("\n").map((line, index) => (
+                  <Typography
+                    key={index}
+                    sx={{
+                      color:
+                        line.includes("Error") || line.includes("Failed")
+                          ? "#ff5252"
+                          : "#00ff00",
+                      fontWeight: line.includes("Error") ? "bold" : "normal",
+                    }}
+                  >
+                    {line}
+                  </Typography>
+                ))
+              ) : (
+                <Typography sx={{ color: "#888", fontStyle: "italic" }}>
+                  No output yet...
+                </Typography>
+              )}
+            </Box>
           </Box>
         </motion.div>
       </Box>

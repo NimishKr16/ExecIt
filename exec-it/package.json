@@ -18,7 +18,8 @@
     "next": "15.2.1",
     "piston": "^0.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-simple-typewriter": "^5.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
