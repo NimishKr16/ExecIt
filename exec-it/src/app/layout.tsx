@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 
 const theme = createTheme({
@@ -54,6 +55,7 @@ export default function RootLayout({
         <ThemeProvider theme={theme}>
           <CssBaseline /> {/* Ensures consistent MUI styles */}
           {children}
+          <Footer></Footer>
         </ThemeProvider>
       </body>
     </html>
