@@ -5,6 +5,10 @@ import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   InputLabel,
   MenuItem,
@@ -17,7 +21,10 @@ import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import CodeEditor from "@/components/CodeEditor";
 import { Typewriter } from "react-simple-typewriter";
-const languages = {
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+const languages: { [key: string]: string } = {
   javascript: "javascript",
   python: "python",
   c: "c",
@@ -31,6 +38,8 @@ export default function Home() {
   const [output, setOutput] = useState("");
   const [input, setInput] = useState("");
   const theme = useTheme();
+  const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState("");
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if screen is small
   const text = "ExecIt - Online Code Compiler";
 
@@ -39,6 +48,30 @@ export default function Home() {
     setOutput(""); // Clear the output when the language is changed
     setInput(""); // Clear the input when the language is changed
   }, [language]);
+
+  const handleImproveWithAI = async () => {
+    if (!code) {
+      alert("Write some code first!");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/improve-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await response.json();
+      setSuggestions(data.suggestions); // Store AI response
+    } catch (error) {
+      console.error("AI Suggestion Error:", error);
+    }
+
+    setLoading(false);
+  };
 
   const runCode = async () => {
     setOutput("Running..."); // Show loading state
@@ -139,19 +172,58 @@ export default function Home() {
             {/* Run Button (Top-right) */}
             <Button
               variant="contained"
-              color="primary"
               sx={{
-                width: { xs: "100px", md: "120px" },
-                height: { xs: "35px", md: "40px" },
-                fontSize: { xs: "14px", md: "16px" },
+                background: "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
+                color: "white",
                 fontWeight: "bold",
-                borderRadius: 2,
-                backgroundColor: "#00bcd4",
-                "&:hover": { backgroundColor: "#008ba3" },
+                textTransform: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                transition: "all 0.3s ease-in-out",
+                boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
+                  boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
+                  transform: "translateY(-2px)",
+                },
+                "&:active": {
+                  transform: "scale(0.98)",
+                  boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
+                },
+                ml: 2,
               }}
               onClick={runCode}
             >
-              Run Code
+              ⚡️ Run Code
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{
+                background: "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
+                color: "white",
+                fontWeight: "bold",
+                textTransform: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                transition: "all 0.3s ease-in-out",
+                boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
+                  boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
+                  transform: "translateY(-2px)",
+                },
+                "&:active": {
+                  transform: "scale(0.98)",
+                  boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
+                },
+                ml: 2,
+              }}
+              onClick={handleImproveWithAI}
+            >
+              🚀 Improve with AI
             </Button>
           </Box>
 
@@ -231,7 +303,7 @@ export default function Home() {
                 fontWeight: "bold",
               }}
             >
-              Terminal Output
+              Output
             </Typography>
 
             {/* Scrollable Output Box */}
@@ -245,7 +317,7 @@ export default function Home() {
                 fontSize: "14px",
                 whiteSpace: "pre-wrap", // Keeps formatting
                 overflowY: "auto",
-                maxHeight: "200px", // Prevents growing too large
+                maxHeight: "400px", // Prevents growing too large
                 border: "1px solid #333",
               }}
             >
@@ -273,6 +345,38 @@ export default function Home() {
           </Box>
         </motion.div>
       </Box>
+      <Dialog
+        open={Boolean(suggestions)}
+        onClose={() => setSuggestions("")}
+        fullWidth
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "90%", // Adjust width for responsiveness
+            maxWidth: "500px", // Limit max width for larger screens
+            borderRadius: "12px", // Rounded corners for a modern look
+          },
+        }}
+      >
+        <DialogTitle>AI Code Improvements</DialogTitle>
+        <DialogContent
+        sx={{
+          maxHeight: "70vh",
+          overflowY: "auto",
+        }}
+        >
+          <SyntaxHighlighter
+            language={languages[language] || "plaintext"}
+            style={oneDark}
+          >
+            {suggestions || "Loading..."}
+          </SyntaxHighlighter>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSuggestions("")} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
