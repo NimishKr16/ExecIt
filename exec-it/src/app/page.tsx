@@ -117,6 +117,7 @@ export default function Home() {
       <Box
         sx={{
           display: "flex",
+          mt: 5,
           flexDirection: { xs: "column", md: "row" }, // Stack on small screens
           gap: 2,
           height: "80vh",
