@@ -13,17 +13,17 @@ const Footer = () => {
       }}
     >
       <Typography variant="body2" color="text.secondary">
-        © {new Date().getFullYear()} ExecIt - Built by Nimish Kumar
+        © 2025 ExecIt - Built by Nimish Kumar
       </Typography>
-
+      
       <Box sx={{ mt: 1 }}>
-        <IconButton component={Link} href="https://github.com/Nimish-Kumar" target="_blank">
+        <IconButton component={Link} href="https://github.com/NimishKr16" target="_blank">
           <GitHub />
         </IconButton>
-        <IconButton component={Link} href="https://linkedin.com/in/nimish-kumar" target="_blank">
+        <IconButton component={Link} href="https://www.linkedin.com/in/nimish-kumar16/" target="_blank">
           <LinkedIn />
         </IconButton>
-        <IconButton component={Link} href="https://nimishkumar.dev" target="_blank">
+        <IconButton component={Link} href="https://nimishkumar.vercel.app/" target="_blank">
           <Language />
         </IconButton>
       </Box>

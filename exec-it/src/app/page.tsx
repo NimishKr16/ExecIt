@@ -38,7 +38,7 @@ export default function Home() {
   const [output, setOutput] = useState("");
   const [input, setInput] = useState("");
   const theme = useTheme();
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState("");
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if screen is small
   const text = "ExecIt - Online Code Compiler";
@@ -137,107 +137,111 @@ export default function Home() {
         >
           {/* Top Bar: Language Selector & Run Button */}
           <Box
-  sx={{
-    display: "flex",
-    justifyContent: { xs: "center", md: "space-between" }, // Centered on mobile, spaced on desktop
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 2, // Add spacing between elements
-    mb: 2,
-    flexDirection: { xs: "column", md: "row" }, // Column for mobile, row for desktop
-  }}
->
-  {/* Language Selector (Smaller on Mobile) */}
-  <FormControl
-    variant="outlined"
-    sx={{ width: { xs: "100%", sm: "150px" } }} // Full width on very small screens
-  >
-    <InputLabel>Language</InputLabel>
-    <Select
-      value={language}
-      onChange={(e) => setLanguage(e.target.value)}
-      label="Language"
-      sx={{
-        backgroundColor: "#1e1e1e",
-        color: "white",
-        borderRadius: 2,
-        fontSize: { xs: "12px", md: "14px" },
-      }}
-    >
-      {Object.keys(languages).map((lang) => (
-        <MenuItem key={lang} value={lang}>
-          {lang.toUpperCase()}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
+            sx={{
+              display: "flex",
+              justifyContent: { xs: "center", md: "space-between" }, // Centered on mobile, spaced on desktop
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 2, // Add spacing between elements
+              mb: 2,
+              flexDirection: { xs: "column", md: "row" }, // Column for mobile, row for desktop
+            }}
+          >
+            {/* Language Selector (Smaller on Mobile) */}
+            <FormControl
+              variant="outlined"
+              sx={{ width: { xs: "100%", sm: "150px" } }} // Full width on very small screens
+            >
+              <InputLabel>Language</InputLabel>
+              <Select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                label="Language"
+                sx={{
+                  backgroundColor: "#1e1e1e",
+                  color: "white",
+                  borderRadius: 2,
+                  fontSize: { xs: "12px", md: "14px" },
+                }}
+              >
+                {Object.keys(languages).map((lang) => (
+                  <MenuItem key={lang} value={lang}>
+                    {lang.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-  {/* Button Container (Ensures buttons are always together on desktop) */}
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: { xs: "column", md: "row" }, // Stack buttons on mobile, row on desktop
-      alignItems: "center",
-      gap: { xs: 1, md: 2 }, // Smaller gap on mobile, larger on desktop
-    }}
-  >
-    {/* Run Button */}
-    <Button
-      variant="contained"
-      sx={{
-        background: "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
-        color: "white",
-        fontWeight: "bold",
-        textTransform: "none",
-        borderRadius: "8px",
-        padding: "10px 20px",
-        transition: "all 0.3s ease-in-out",
-        boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
-        "&:hover": {
-          background: "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
-          boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
-          transform: "translateY(-2px)",
-        },
-        "&:active": {
-          transform: "scale(0.98)",
-          boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
-        },
-        width: { xs: "100%", md: "auto" }, // Full width on mobile
-      }}
-      onClick={runCode}
-    >
-      ⚡️ Run Code
-    </Button>
+            {/* Button Container (Ensures buttons are always together on desktop) */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" }, // Stack buttons on mobile, row on desktop
+                alignItems: "center",
+                gap: { xs: 1, md: 2 }, // Smaller gap on mobile, larger on desktop
+              }}
+            >
+              {/* Run Button */}
+              <Button
+                variant="contained"
+                sx={{
+                  background:
+                    "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
+                  color: "white",
+                  fontWeight: "bold",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  transition: "all 0.3s ease-in-out",
+                  boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
+                    boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
+                    transform: "translateY(-2px)",
+                  },
+                  "&:active": {
+                    transform: "scale(0.98)",
+                    boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
+                  },
+                  width: { xs: "100%", md: "auto" }, // Full width on mobile
+                }}
+                onClick={runCode}
+              >
+                ⚡️ Run Code
+              </Button>
 
-    {/* Improve with AI Button */}
-    <Button
-      variant="contained"
-      sx={{
-        background: "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
-        color: "white",
-        fontWeight: "bold",
-        textTransform: "none",
-        borderRadius: "8px",
-        padding: "10px 20px",
-        transition: "all 0.3s ease-in-out",
-        boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
-        "&:hover": {
-          background: "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
-          boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
-          transform: "translateY(-2px)",
-        },
-        "&:active": {
-          transform: "scale(0.98)",
-          boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
-        },
-        width: { xs: "100%", md: "auto" }, // Full width on mobile
-      }}
-      onClick={handleImproveWithAI}
-    >
-      🚀 Improve with AI
-    </Button>
-  </Box>
-</Box>
+              {/* Improve with AI Button */}
+              <Button
+                variant="contained"
+                sx={{
+                  background:
+                    "linear-gradient(135deg, #1976d2 30%, #1565c0 90%)",
+                  color: "white",
+                  fontWeight: "bold",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  transition: "all 0.3s ease-in-out",
+                  boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.4)",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #1565c0 30%, #0d47a1 90%)",
+                    boxShadow: "0px 6px 14px rgba(21, 101, 192, 0.6)",
+                    transform: "translateY(-2px)",
+                  },
+                  "&:active": {
+                    transform: "scale(0.98)",
+                    boxShadow: "0px 2px 6px rgba(21, 101, 192, 0.4)",
+                  },
+                  width: { xs: "100%", md: "auto" }, // Full width on mobile
+                }}
+                onClick={handleImproveWithAI}
+              >
+                🚀 Improve with AI
+              </Button>
+            </Box>
+          </Box>
 
           {/* Code Editor (Bigger) */}
           <CodeEditor language={language} code={code} setCode={setCode} />
@@ -286,10 +290,10 @@ export default function Home() {
                 backgroundColor: "#121212",
                 borderRadius: 2,
                 color: "white",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#00bcd4" },
-                  "&:hover fieldset": { borderColor: "#008ba3" },
-                },
+                // "& .MuiOutlinedInput-root": {
+                //   "& fieldset": { borderColor: "#00bcd4" },
+                //   "&:hover fieldset": { borderColor: "#008ba3" },
+                // },
               }}
             />
           </Box>
@@ -371,10 +375,10 @@ export default function Home() {
       >
         <DialogTitle>AI Code Improvements</DialogTitle>
         <DialogContent
-        sx={{
-          maxHeight: "70vh",
-          overflowY: "auto",
-        }}
+          sx={{
+            maxHeight: "70vh",
+            overflowY: "auto",
+          }}
         >
           <SyntaxHighlighter
             language={languages[language] || "plaintext"}

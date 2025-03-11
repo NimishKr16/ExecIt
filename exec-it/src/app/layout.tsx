@@ -1,7 +1,7 @@
 "use client";
 
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -22,9 +22,9 @@ const theme = createTheme({
       secondary: "#b0bec5", // Light grey text
     },
   },
-  typography: {
-    fontFamily: "'Inter', sans-serif", // Modern typography
-  },
+  // typography: {
+  //   fontFamily: "'Inter', sans-serif", // Modern typography
+  // },
 });
 
 const geistSans = Geist({
@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider theme={theme}>
           <CssBaseline /> {/* Ensures consistent MUI styles */}
